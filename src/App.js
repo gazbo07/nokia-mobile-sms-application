@@ -1,29 +1,13 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useCallback } from "react";
 import Cursor from "./components/Cursor";
 import "./styles.css";
+import { buttons } from "./config";
+
+import { useLazyRef } from "./utils";
 
 // https://4.imimg.com/data4/GY/RX/ANDROID-40083844/product-500x500.jpeg
 
-const buttons = [
-  { label: "1", value: "", isDisabled: true },
-  { label: "2", value: "abc2" },
-  { label: "3", value: "def3" },
-  { label: "4", value: "ghi4" },
-  { label: "5", value: "jkl5" },
-  { label: "6", value: "mno6" },
-  { label: "7", value: "pqrs7" },
-  { label: "8", value: "tuv8" },
-  { label: "9", value: "wxyz9" },
-  { label: "*", value: "", isDisabled: true },
-  { label: "0", value: " " },
-  { label: "#", value: "", isDisabled: true }
-];
-
 let GLOBAL_INDEX = -1;
-const DEFAULT_BUTTON = {
-  label: "-1",
-  value: ""
-};
 
 function customDebounce(callbackFn, delayMs) {
   function internalFn(...args) {
@@ -42,18 +26,9 @@ function customDebounce(callbackFn, delayMs) {
   return internalFn;
 }
 
-const _obj = {};
-function useLazyRef(callbackFn) {
-  const ref = useRef(_obj);
-  if (ref.current === _obj) {
-    ref.current = callbackFn();
-  }
-  return ref.current;
-}
-
 export default function App() {
   const [message, setMessage] = useState("");
-  const [activeButtonLabel, setActiveButtonLabel] = useState(DEFAULT_BUTTON);
+  const [activeButtonLabel, setActiveButtonLabel] = useState("");
 
   const _setMessage = useCallback(({ value = "" }) => {
     const _index = GLOBAL_INDEX % value.length;
