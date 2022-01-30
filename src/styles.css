@@ -30,9 +30,14 @@
 }
 
 .key {
+  cursor: pointer;
   padding: 8px;
   margin: 8px;
   box-shadow: 1px 1px 5px 1px rgba(20, 20, 20, 0.9);
+}
+
+.key[disabled] {
+  cursor: not-allowed;
 }
 
 .cursor {

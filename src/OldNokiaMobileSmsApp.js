@@ -1,42 +1,20 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import Cursor from "./components/Cursor";
 import "./styles.css";
 import { buttons } from "./config";
 
-import { useLazyRef } from "./utils";
+import { customDebounce, useLazyRef } from "./utils";
 
 // https://4.imimg.com/data4/GY/RX/ANDROID-40083844/product-500x500.jpeg
 
-let GLOBAL_INDEX = -1;
-
-function customDebounce(callbackFn, delayMs) {
-  function internalFn(...args) {
-    GLOBAL_INDEX = GLOBAL_INDEX + 1;
-    clearTimeout(internalFn.token);
-    const execute = () => {
-      callbackFn(...args);
-      clearTimeout(internalFn.token);
-      internalFn.token = null;
-      GLOBAL_INDEX = -1;
-    };
-    internalFn.token = setTimeout(execute, delayMs);
-    internalFn.executeNow = execute;
-  }
-  internalFn.token = null;
-  return internalFn;
-}
-
-export default function App() {
+export default function OldNokiaMobileSmsApp() {
   const [message, setMessage] = useState("");
   const [activeButtonLabel, setActiveButtonLabel] = useState("");
 
-  const _setMessage = useCallback(({ value = "" }) => {
-    const _index = GLOBAL_INDEX % value.length;
-    const _ch = value[_index];
-    setMessage((m) => m + _ch);
-  }, []);
-
   const debounceSetMessage = useLazyRef(() => {
+    const _setMessage = ({ ch = "" }) => {
+      setMessage((message) => message + ch);
+    };
     return customDebounce(_setMessage, 500);
   });
 
@@ -54,10 +32,14 @@ export default function App() {
   };
 
   const handleDeleteClick = () => {
-    setMessage((m) => m.substring(0, m.length - 1));
+    setMessage(message.substring(0, message.length - 1));
   };
 
-  const renderButtons = () => {
+  const clearMessage = () => {
+    setMessage("");
+  };
+
+  const renderKeypad = () => {
     return buttons.map((button) => {
       const { label, value, isDisabled } = button;
       return (
@@ -70,11 +52,17 @@ export default function App() {
           disabled={isDisabled}
         >
           {label}
-          {value != "" && <div>({value})</div>}
+          {value != "" && (
+            <div>
+              <q>{value}</q>
+            </div>
+          )}
         </button>
       );
     });
   };
+
+  const isEmptyMessage = message === "";
 
   return (
     <div className="App">
@@ -86,10 +74,21 @@ export default function App() {
           </p>
         </div>
         <p>word count: {message.length}</p>
-        <button className="key" onClick={handleDeleteClick}>
+        <button
+          className="key"
+          onClick={clearMessage}
+          disabled={isEmptyMessage}
+        >
+          Clear All
+        </button>
+        <button
+          className="key"
+          onClick={handleDeleteClick}
+          disabled={isEmptyMessage}
+        >
           Delete
         </button>
-        <div className="keypad">{renderButtons()}</div>
+        <div className="keypad">{renderKeypad()}</div>
       </div>
     </div>
   );

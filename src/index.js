@@ -1,12 +1,12 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 
-import App from "./App";
+import OldNokiaMobileSmsApp from "./OldNokiaMobileSmsApp";
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <StrictMode>
-    <App />
+    <OldNokiaMobileSmsApp />
   </StrictMode>,
   rootElement
 );
